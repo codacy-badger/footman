@@ -22,7 +22,7 @@ Footman uses [Composer](http://getcomposer.org/doc/00-intro.md#installation-nix)
 
 Learn to use composer and run this Command Line:
 
-    composer require alshf/Footman
+    composer require alshf/footman
 
 ### How to use
 
