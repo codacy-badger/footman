@@ -48,7 +48,7 @@ $response = $client->request(function ($request) {
     ];
 
     $request->allow_redirects = [
-        'max'              => 10,
+        'max'             => 10,
         'strict'          => false,
         'referer'         => false,
         'protocols'       => ['http', 'https'],
