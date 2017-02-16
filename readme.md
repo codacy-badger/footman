@@ -103,6 +103,9 @@ try {
     	// Request URL
         $request->request_url = 'https://google.com/';
 
+        // Authenticate
+        $request->auth = ['username', 'password'];
+        
         // Form Data For POST Request
         $request->form_params = [
 	        'foo' => 'bar',
