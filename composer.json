@@ -1,0 +1,27 @@
+{
+    "name": "alshf/footman",
+    "description": "Footman Send request on any URL.",
+    "keywords" : ["cURL","Request","Guzzle","GuzzleHttp","Footman"],
+    "homepage": "https://github.com/alshf89/footman",
+    "require": {
+        "php": ">=7.0",
+        "guzzlehttp/guzzle": "^6.2"
+    },
+    "require-dev": {
+        "illuminate/support": "^5.4",
+        "symfony/var-dumper": "^3.0"
+    },
+    "license": "BSD-3-Clause",
+    "authors": [
+        {
+            "name": "Ali Shafiee",
+            "email": "alshf89@gmail.com",
+            "role": "Developer"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Alshf\\": "engine/"
+        }
+    }
+}
