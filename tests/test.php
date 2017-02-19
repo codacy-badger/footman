@@ -2,11 +2,11 @@
 
 require dirname(__DIR__) . '/vendor/autoload.php';
 
-use Alshf\RequestProvider;
-use Alshf\Exceptions\RequestProviderException;
+use Alshf\Footman;
+use Alshf\Exceptions\FootmanException;
 
 try {
-    $client = new RequestProvider;
+    $client = new Footman;
 
     $response = $client->request(function ($request) {
         $request->header = [
@@ -28,7 +28,7 @@ try {
         $request->form_params = [
             'foo' => 'bar',
             'baz' => ['hi', 'there!']
-        ]
+        ];
     });
 
     dump($response->getHeaders());
@@ -39,6 +39,6 @@ try {
     dump($response->read(10));
     dump($response->getStatus());
     dump($response->getStatusPhrase());
-} catch (RequestProviderException $e) {
+} catch (FootmanException $e) {
     dump($e->getMessage());
 }

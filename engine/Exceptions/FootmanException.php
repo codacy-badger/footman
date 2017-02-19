@@ -4,4 +4,4 @@ namespace Alshf\Exceptions;
 
 use Exception;
 
-class RequestProviderException extends Exception {}
+class FootmanException extends Exception {}

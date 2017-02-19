@@ -36,10 +36,10 @@ require 'vendor/autoload.php';
 
 ```PHP
 // Use Request Provider
-use Alshf\RequestProvider;
+use Alshf\Footman;
 
 // Create New Instance of it
-$client = new RequestProvider;
+$client = new Footman;
 
 // Now you can make a request by passing a closure in it
 $response = $client->request(function ($request) {
@@ -64,7 +64,7 @@ $response->getHeaders();
 // Get Specific Header 
 $response->getHeader('content/type');
 
-// Check specific Header key exist ?
+// Check specific Header key
 $response->hasHeader('content/type');
 
 // Get Response body, You can cast it to String
@@ -73,7 +73,7 @@ $response->getbody();
 // Get Response Raw Body
 $response->getContents();
 
-// Read 10 Character of body
+// Read 10 Characters of body
 $response->read(10);
 
 // Get Request Status 200, 404, ...
@@ -86,15 +86,15 @@ ___
 
 #### Error Handler
 
-you can get all Error with *RequestProviderException* Exception.
+you can get all Error with *FootmanException* Exception.
 
 ```PHP
 // Use Request Provider & Exceptions
-use Alshf\RequestProvider;
-use Alshf\Exceptions\RequestProviderException;
+use Alshf\Footman;
+use Alshf\Exceptions\FootmanException;
 
 try {
-    $client = new RequestProvider;
+    $client = new Footman;
 
     $response = $client->request(function ($request) {
     	// POST, GET, PUT, PATCH, DELETE
@@ -114,7 +114,7 @@ try {
 
 	    $request->allow_redirects = false;
     });
-} catch (RequestProviderException $e) {
+} catch (FootmanException $e) {
     echo $e->getMessage();
 }
 ```
