@@ -12,7 +12,7 @@ use Alshf\Exceptions\FootmanException;
 
 class Footman
 {
-    private $parameters;
+    private $options;
 
     private $client;
 
@@ -20,24 +20,27 @@ class Footman
 
     private static $requestType = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'];
 
-    public function __construct(array $parameters = [])
+    public function __construct()
     {
         $this->client = new Client;
-
-        $this->parameters = collect($parameters);
     }
 
     public function __get($key)
     {
-        return $this->parameters->get($key);
+        return $this->options->get($key);
     }
 
     public function __set($key, $value)
     {
-        $this->parameters->put($key, $value);
+        $this->options->put($key, $value);
     }
 
-    public function request(Closure $closure)
+    public function setDefaultRequestOption(array $options = [])
+    {
+        $this->options = collect($options);
+    }
+
+    public function request(Closure $closure = null)
     {
         return $this->execute($closure)
                     ->checkRequestType()
@@ -45,25 +48,23 @@ class Footman
                     ->make();
     }
 
-    private function execute(Closure $closure)
+    private function execute($closure)
     {
-        if (! is_callable($closure)) {
-            throw new FootmanException('No Closure Found to execute!');
+        if (is_callable($closure)) {
+            $closure($this);
         }
-        
-        $closure($this);
 
         return $this;
     }
 
     private function checkRequestType()
     {
-        if (! $this->parameters->has('request_type')) {
+        if (! $this->options->has('request_type')) {
             throw new FootmanException('No request type provided!');
         }
 
-        if (! $this->parameters->whereIn('request_type', static::$requestType)) {
-            throw new FootmanException('Invalid Request type [' . $this->parameters->get('request_type') . ']');
+        if (! $this->options->whereIn('request_type', static::$requestType)) {
+            throw new FootmanException('Invalid Request type [' . $this->options->get('request_type') . ']');
         }
         
         return $this;
@@ -71,7 +72,7 @@ class Footman
 
     private function checkURL()
     {
-        if (! $this->parameters->has('request_url')) {
+        if (! $this->options->has('request_url')) {
             throw new FootmanException('No request URL provided!');
         }
 
@@ -82,9 +83,9 @@ class Footman
     {
         try {
             $this->response = $this->client->request(
-                $this->parameters->pull('request_type'),
-                $this->parameters->pull('request_url'),
-                $this->parameters->toArray()
+                $this->options->pull('request_type'),
+                $this->options->pull('request_url'),
+                $this->options->toArray()
             );
 
             return new Response($this->response);
