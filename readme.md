@@ -9,6 +9,8 @@ Footman can Send any Request to any URL. At least PHP 7.0 is required.
 ## Documentation
 
  - [Installation](#installation)
+    - [Basic Setup](#basic-setup)
+    - [Laravel Additional Steps](#laravel-additional-steps)
  - [How to use](#how-to-use)
  	- [Example](#example)
  	- [Error Handler](#error-handler)
@@ -17,12 +19,33 @@ Footman can Send any Request to any URL. At least PHP 7.0 is required.
  - [License](#license)
 
 ### Installation
-
 Footman uses [Composer](http://getcomposer.org/doc/00-intro.md#installation-nix) to make things easy.
+
+Composer is a dependency management tool for PHP that allows you to declare the dependencies your project needs and installs them into your project.
+#### Basic Setup
 
 Learn to use composer and run this Command Line:
 
     composer require alshf/footman
+
+#### Laravel Additional Steps
+If you're using Laravel and would like to use *Footman* with it, then follow the below instructions. Otherwise, you can skip this part.
+
+Open _config/app.php_ and, to your providers array at the bottom, add:
+
+```PHP
+Alshf\Laravel\Providers\FootmanServiceProviders::class,
+```
+
+Optionally add an alias to make it easier to use the library. Open config/app.php and, to your _aliases_ array at the bottom, add
+
+```PHP
+'Footman' => Alshf\Laravel\Facades\Footman::class,
+```
+
+Now open your _terminal_ window and fire the following command to publish config file to your config directory
+
+    php artisan vendor:publish --tag=footman
 
 ### How to use
 

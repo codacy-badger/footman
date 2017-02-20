@@ -52,6 +52,8 @@ class FootmanServiceProvider extends ServiceProvider
                 'request_type'   => $app['config']->get('footman.request_type'),
             ]);
         });
+
+        $this->app->alias(Footman::class, 'footman');
     }
 
     /**
@@ -61,6 +63,6 @@ class FootmanServiceProvider extends ServiceProvider
      */
     public function provides()
     {
-        return [Footman::class];
+        return ['footman', Footman::class];
     }
 }

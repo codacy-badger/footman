@@ -38,6 +38,8 @@ class Footman
     public function setDefaultRequestOption(array $options = [])
     {
         $this->options = collect($options);
+
+        return $this;
     }
 
     public function request(Closure $closure = null)
