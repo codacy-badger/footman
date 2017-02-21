@@ -4,6 +4,7 @@ require dirname(__DIR__) . '/vendor/autoload.php';
 
 use Alshf\Footman;
 use Alshf\Exceptions\FootmanException;
+use Alshf\Exceptions\FootmanResponseException;
 
 try {
     $client = new Footman;
@@ -37,8 +38,10 @@ try {
     dump($response->getbody());
     dump($response->getContents());
     dump($response->read(10));
-    dump($response->getStatus());
+    dump($response->getStatusCode());
     dump($response->getStatusPhrase());
 } catch (FootmanException $e) {
+    dump($e->getMessage());
+} catch (FootmanResponseException $e) {
     dump($e->getMessage());
 }

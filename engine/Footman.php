@@ -18,10 +18,12 @@ class Footman
 
     private $response;
 
-    private static $requestType = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'];
+    private static $requestType = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS'];
 
-    public function __construct()
+    public function __construct(array $options = [])
     {
+        $this->options = collect($options);
+
         $this->client = new Client;
     }
 
@@ -32,14 +34,11 @@ class Footman
 
     public function __set($key, $value)
     {
+        if ($this->overwrite($key, $value)) {
+            $value = collect($this->options->get($key))->merge($value);
+        }
+
         $this->options->put($key, $value);
-    }
-
-    public function setDefaultRequestOption(array $options = [])
-    {
-        $this->options = collect($options);
-
-        return $this;
     }
 
     public function request(Closure $closure = null)
@@ -107,5 +106,10 @@ class Footman
         }
 
         return collect(compact('request', 'response'))->implode(null);
+    }
+
+    private function overwrite($key, $value)
+    {
+        return $this->options->has($key) && is_array($this->options->get($key)) && is_array($value);
     }
 }

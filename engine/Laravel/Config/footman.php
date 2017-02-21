@@ -2,14 +2,14 @@
 return [
     /*
     |--------------------------------------------------------------------------
-    | Footman Allow Redirect [bool]
+    | Footman Allow Redirect [bool|array]
     |--------------------------------------------------------------------------
     |
     | Allow Redirect Default Value, This value will be set on
     | each request, But you can overwrite it in the closure
     |
     */
-   'allow_redirect' => env('FOOTMAN_REDIRECT', true),
+   'allow_redirects' => env('FOOTMAN_REDIRECT', true),
 
     /*
     |--------------------------------------------------------------------------

@@ -3,6 +3,7 @@
 namespace Alshf;
 
 use Psr\Http\Message\ResponseInterface;
+use Alshf\Exceptions\FootmanResponseException;
 
 class Response
 {
@@ -11,25 +12,6 @@ class Response
     public function __construct(ResponseInterface $response)
     {
         $this->response = $response;
-    }
-
-    public function getBody()
-    {
-        return $this->response->getBody();
-    }
-
-    public function getHeaders()
-    {
-        return $this->response->getHeaders();
-    }
-
-    public function getHeader($key)
-    {
-        if ($this->hasHeader($key)) {
-            return $this->response->getHeader($key);
-        }
-
-        return null;
     }
 
     public function read($length)
@@ -42,18 +24,22 @@ class Response
         return $this->getBody()->getContents();
     }
 
-    public function hasHeader($key)
+    public function seek($pointer)
     {
-        return $this->response->hasHeader($key);
+        return $this->getBody()->seek($pointer);
     }
 
-    public function getStatus()
+    public function getHeaders()
     {
-        return $this->response->getStatusCode();
+        return collect($this->getHeaders());
     }
 
-    public function getStatusPhrase()
+    public function __call($method, $arguments)
     {
-        return $this->response->getReasonPhrase();
+        if (method_exists($this->response, $method)) {
+            return call_user_func_array([$this->response, $method], $arguments);
+        }
+
+        throw new FootmanResponseException('Method [' . $method . '] doesn\'t exist!');
     }
 }

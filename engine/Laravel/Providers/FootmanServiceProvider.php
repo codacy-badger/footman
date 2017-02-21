@@ -46,10 +46,10 @@ class FootmanServiceProvider extends ServiceProvider
     protected function registerFootman()
     {
         $this->app->singleton(Footman::class, function ($app) {
-            return (new Footman)->setDefaultRequestOption([
-                'allow_redirect' => $app['config']->get('footman.allow_redirect'),
-                'timeout'        => $app['config']->get('footman.timeout'),
-                'request_type'   => $app['config']->get('footman.request_type'),
+            return new Footman([
+                'allow_redirects' => $app['config']->get('footman.allow_redirects'),
+                'timeout'         => $app['config']->get('footman.timeout'),
+                'request_type'    => $app['config']->get('footman.request_type'),
             ]);
         });
 
