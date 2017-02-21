@@ -100,7 +100,7 @@ $response->getContents();
 $response->read(10);
 
 // Get Request Status 200, 404, ...
-$response->getStatus();
+$response->getStatusCode();
 
 // Get Request Status Pharase ex: OK...
 $response->getStatusPhrase();
