@@ -1,15 +1,16 @@
 <?php
 return [
-    /*
+   /*
     |--------------------------------------------------------------------------
-    | Footman Allow Redirect [bool|array]
+    | Footman Default Request Type [String]
     |--------------------------------------------------------------------------
     |
-    | Allow Redirect Default Value, This value will be set on
-    | each request, But you can overwrite it in the closure
+    | Request Type Default Value, This value will be set on
+    | each request, But you can overwrite it in the closure.
+    | Request Type must be one of these values [GET, POST, PUT, PATCH, DELETE]
     |
     */
-   'allow_redirects' => env('FOOTMAN_REDIRECT', true),
+   'request_type' => env('FOOTMAN_REQUEST_TYPE', 'GET'),
 
     /*
     |--------------------------------------------------------------------------
@@ -25,13 +26,18 @@ return [
 
    /*
     |--------------------------------------------------------------------------
-    | Footman Default Request Type [String]
+    | Footman Allow Redirect [bool|array]
     |--------------------------------------------------------------------------
     |
-    | Request Type Default Value, This value will be set on
-    | each request, But you can overwrite it in the closure.
-    | Request Type must be one of these values [GET, POST, PUT, PATCH, DELETE]
+    | Allow Redirect Default Value, This value will be set on
+    | each request, But you can overwrite it in the closure
     |
     */
-   'request_type' => env('FOOTMAN_REQUEST_TYPE', 'GET'),
+   'allow_redirects' => [
+        'max'             => 5,
+        'strict'          => true,
+        'referer'         => true,
+        'protocols'       => ['http', 'https'],
+        'track_redirects' => true
+    ],
 ];
