@@ -34,7 +34,7 @@ If you're using Laravel and would like to use *Footman* with it, then follow the
 Open _config/app.php_ and, to your providers array at the bottom, add:
 
 ```PHP
-Alshf\Laravel\Providers\FootmanServiceProviders::class,
+Alshf\Laravel\Providers\FootmanServiceProvider::class,
 ```
 
 Optionally add an alias to make it easier to use the library. Open config/app.php and, to your _aliases_ array at the bottom, add

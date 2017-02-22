@@ -45,12 +45,10 @@ class FootmanServiceProvider extends ServiceProvider
      */
     protected function registerFootman()
     {
-        $this->app->singleton(Footman::class, function ($app) {
-            return new Footman([
-                'allow_redirects' => $app['config']->get('footman.allow_redirects'),
-                'timeout'         => $app['config']->get('footman.timeout'),
-                'request_type'    => $app['config']->get('footman.request_type'),
-            ]);
+        $config = $this->getFootmanConfiguration();
+
+        $this->app->singleton(Footman::class, function ($app) use ($config) {
+            return new Footman($config);
         });
 
         $this->app->alias(Footman::class, 'footman');
@@ -64,5 +62,12 @@ class FootmanServiceProvider extends ServiceProvider
     public function provides()
     {
         return ['footman', Footman::class];
+    }
+
+    private function getFootmanConfiguration()
+    {
+        return collect($this->app['config']->get('footman'))->filter(function ($value, $key) {
+            return !is_null($value);
+        })->toArray();
     }
 }

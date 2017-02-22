@@ -88,6 +88,9 @@ class Footman
                 $this->options->pull('request_url'),
                 $this->options->toArray()
             );
+            
+            $this->options->forget('form_params');
+            $this->options->forget('multipart');
 
             return new Response($this->response);
         } catch (RequestException $e) {
