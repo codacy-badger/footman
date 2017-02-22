@@ -4,7 +4,7 @@
     "keywords" : ["cURL","Request","Guzzle","GuzzleHttp","Footman"],
     "homepage": "https://github.com/alshf89/footman",
     "require": {
-        "php": ">=7.0",
+        "php": ">=5.6",
         "guzzlehttp/guzzle": "^6.2"
     },
     "require-dev": {
