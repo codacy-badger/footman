@@ -9,6 +9,8 @@ use Alshf\Exceptions\FootmanException;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Psr7 as GuzzleErrorHandler;
+use Alshf\Exceptions\FootmanCookiesException;
+use Alshf\Exceptions\FootmanRequestException;
 
 class Footman
 {
@@ -63,11 +65,11 @@ class Footman
     private function checkRequestType()
     {
         if (! $this->options->has('request_type')) {
-            throw new FootmanException('No request type provided!');
+            throw new FootmanRequestException('No request type provided!');
         }
 
         if (! $this->options->whereIn('request_type', static::$requestType)) {
-            throw new FootmanException('Invalid Request type [' . $this->options->get('request_type') . ']');
+            throw new FootmanRequestException('Invalid Request type [' . $this->options->get('request_type') . ']');
         }
         
         return $this;
@@ -76,7 +78,7 @@ class Footman
     private function checkURL()
     {
         if (! $this->options->has('request_url')) {
-            throw new FootmanException('No request URL provided!');
+            throw new FootmanRequestException('No request URL provided!');
         }
 
         return $this;
@@ -98,9 +100,9 @@ class Footman
 
             return new Response($this->response);
         } catch (RequestException $e) {
-            throw new FootmanException('Networking Errors : ' . $this->exceptionMessage($e));
+            throw new FootmanRequestException('Networking Errors : ' . $this->exceptionMessage($e));
         } catch (ClientException $e) {
-            throw new FootmanException('Http Errors : ' . $this->exceptionMessage($e));
+            throw new FootmanRequestException('Http Errors : ' . $this->exceptionMessage($e));
         }
     }
 
@@ -158,61 +160,84 @@ class Footman
 
     private function getCookieType()
     {
-        if (preg_match('/^.+\\\(File)*CookieJar$/', $this->cookies->get('type'))) {
-            return $this->cookies->get('type');
-        }
+        switch ($this->cookies->get('type')) {
+            case 'file':
+                return \GuzzleHttp\Cookie\FileCookieJar::class;
+                break;
 
-        throw new FootmanException('Invalid Cookie type [' . $this->cookies->get('type') . ']');
+            case 'jar':
+                return \GuzzleHttp\Cookie\CookieJar::class;
+                break;
+            
+            default:
+                throw new FootmanCookiesException('Invalid Cookie type [' . $this->cookies->get('type') . ']');
+                break;
+        }
     }
 
     private function setCookieObject()
     {
-        if ($this->cookies->has('object')) {
-            if ($this->compareCookieTag()) {
-                $this->options->put('cookies', $this->cookies->get('object'));
-            }
+        if ($this->canUseCookies()) {
+            try {
+                $this->getSingletonCookieObject();
+            } catch (FootmanException $e) {
+                $type = $this->getCookieType();
 
-            if (! $this->cookies->has('tag')) {
-                $this->options->put('cookies', $this->cookies->get('object'));
+                $r = new \ReflectionClass($type);
+                $met = new \ReflectionMethod($r->name, $r->getConstructor()->name);
+                // $r->newInstanceArgs($this->cookies->get('session'));
+                dump($r);
+                dump($met->getParameters());
+                dump($r->newInstanceArgs([
+                    'strictMode' => $this->cookies->get('strict')
+                ]));
+                die;
+                if ($type === \GuzzleHttp\Cookie\CookieJar::class) {
+                    if ($this->cookies->has('strict')) {
+                        $cookies = new $type($this->cookies->get('strict') ? true : false);
+                    } else {
+                        $cookies = new $type;
+                    }
+
+                    $this->options->put('cookies', $cookies);
+                }
+
+                if ($type === \GuzzleHttp\Cookie\FileCookieJar::class) {
+                    if (! $this->options->get('cookie_name')) {
+                        throw new FootmanException('No Cookie name Provided!');
+                    }
+
+                    if ($this->cookies->has('session')) {
+                        $cookies = new $type(__DIR__ . '/Cookies/' . $this->cookieTag(), $this->cookies->get('session') ? true : false);
+                    } else {
+                        $cookies = new $type(__DIR__ . '/Cookies/' . $this->cookieTag());
+                    }
+
+                    $this->options->put('cookies', $cookies);
+                }
             }
         }
+    }
 
-        if (! $this->options->has('cookies')) {
-            $type = $this->getCookieType();
-
-            if ($type === \GuzzleHttp\Cookie\CookieJar::class) {
-                if ($this->cookies->has('strict')) {
-                    $cookies = new $type($this->cookies->get('strict') ? true : false);
-                } else {
-                    $cookies = new $type;
-                }
-
-                $this->options->put('cookies', $cookies);
-            }
-
-            if ($type === \GuzzleHttp\Cookie\FileCookieJar::class) {
-                if (! $this->options->get('cookie_name')) {
-                    throw new FootmanException('No Cookie name Provided!');
-                }
-
-                if ($this->cookies->has('session')) {
-                    $cookies = new $type(__DIR__ . '/Cookies/' . $this->cookieTag() , $this->cookies->get('session') ? true : false);
-                } else {
-                    $cookies = new $type(__DIR__ . '/Cookies/' . $this->cookieTag());
-                }
-
-                $this->options->put('cookies', $cookies);
-            }
+    private function getSingletonCookieObject()
+    {
+        if (!$this->cookies->has('object') ||
+            $this->cookies->has('tag') &&
+            !$this->compareCookieTag()
+        ) {
+            throw new FootmanException;
         }
+
+        $this->options->put('cookies', $this->cookies->get('object'));
     }
 
     private function cookieTag()
     {
-        return md5($this->options->get('request_url') . $this->options->get('cookie_name'));
+        return md5($this->options->get('cookie_name'));
     }
 
     private function compareCookieTag()
     {
-        return $this->cookies->get('tag') === $this->cookieTag();
+        return $this->cookies->get('tag') == $this->cookieTag();
     }
 }

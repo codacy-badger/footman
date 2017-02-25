@@ -4,6 +4,6 @@ namespace Alshf\Exceptions;
 
 use Exception;
 
-class FootmanException extends Exception
+class FootmanCookiesException extends Exception
 {
 }

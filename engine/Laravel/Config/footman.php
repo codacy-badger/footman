@@ -125,12 +125,12 @@ return [
     */
     'cookies' => [
         'share' => true,
-        'type' => \GuzzleHttp\Cookie\CookieJar::class,
-        // If you use [\GuzzleHttp\Cookie\FileCookieJar::class] you can 
+        'type' => 'jar',
+        // If you use [file] as a type you can
         // Set Session to true to store session cookies in the cookie jar.
         'session' => true,
-        // If you use [\GuzzleHttp\Cookie\CookieJar::class] you can 
-        // Set Strict to true to throw exceptions when 
+        // If you use [jar] as a type you can
+        // Set Strict to true to throw exceptions when
         // Invalid cookies are added to the cookie jar.
         'strict' => false,
     ],

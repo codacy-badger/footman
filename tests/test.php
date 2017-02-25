@@ -47,68 +47,68 @@ use Alshf\Footman;
 // }
 // 
 
-// $client = new Footman(['cookies' => [
-//         'type' => \GuzzleHttp\Cookie\FileCookieJar::class,
-//         'session' => true
-//     ]
-// ]);
-
-// $res = $client->request(function ($request) {
-//     $request->request_type = 'GET';
-//     $request->request_url = 'https://github.com/login';
-//     $request->allow_redirects = true;
-//     $request->cookie_name = 'alshf89';
-// });
-
-// preg_match('/input.*?authenticity_token".*?value="(.*?)"/', $res->getContents(), $matches);
-// dump($matches[1]);
-
-// $res2 = $client->request(function ($request) use ($matches){
-//     $request->request_type = 'POST';
-//     $request->request_url = 'https://github.com/session';
-//     $request->allow_redirects = true;
-//     $request->cookie_name = 'alshf89';
-//     $request->form_params = [
-//         'login' => 'alshf89',
-//         'password' => 'nima491010',
-//         'commit' => 'Sign in',
-//         'utf8' => '✓',
-//         'authenticity_token' => $matches[1],
-//     ];
-// });
-// dump($res2->getContents());
-// die;
-
-$user = 'alshf89';
-$cookie = new \GuzzleHttp\Cookie\FileCookieJar('/Users/alishafiee/Sites/footman/tests/' . md5($user), true);
-// $cookie = new \GuzzleHttp\Cookie\CookieJar;
-$client = new \GuzzleHttp\Client(['cookies' => true]);
-
-$res = $client->request('GET', 'https://github.com/login', [
-    'cookies' => $cookie,
-    'allow_redirects' => true,
+$client = new Footman(['cookies' => [
+        'type' => 'jar',
+        'strict' => true
+    ]
 ]);
 
-preg_match('/input.*?authenticity_token".*?value="(.*?)"/', $res->getBody()->getContents(), $matches);
+$res = $client->request(function ($request) {
+    $request->request_type = 'GET';
+    $request->request_url = 'https://github.com/login';
+    $request->allow_redirects = true;
+    $request->cookie_name = 'alshf89';
+});
 
-dump($cookie);
+preg_match('/input.*?authenticity_token".*?value="(.*?)"/', $res->getContents(), $matches);
 dump($matches[1]);
 
-$res2 = $client->request('POST', 'https://github.com/session', [
-    'cookies' => $cookie,
-    'allow_redirects' => true,
-    'form_params' => [
-        'login' => $user,
+$res2 = $client->request(function ($request) use ($matches) {
+    $request->request_type = 'POST';
+    $request->request_url = 'https://github.com/session';
+    $request->allow_redirects = true;
+    $request->cookie_name = 'alshf89';
+    $request->form_params = [
+        'login' => 'alshf89',
         'password' => 'nima491010',
         'commit' => 'Sign in',
         'utf8' => '✓',
         'authenticity_token' => $matches[1],
-    ],
-]);
+    ];
+});
+dump($res2->getContents());
+die;
+
+// $user = 'alshf89';
+// $cookie = new \GuzzleHttp\Cookie\FileCookieJar('/Users/alishafiee/Sites/footman/tests/' . md5($user), true);
+// $cookie = new \GuzzleHttp\Cookie\CookieJar;
+// $client = new \GuzzleHttp\Client(['cookies' => true]);
+
+// $res = $client->request('GET', 'https://github.com/login', [
+//     'cookies' => $cookie,
+//     'allow_redirects' => true,
+// ]);
+
+// preg_match('/input.*?authenticity_token".*?value="(.*?)"/', $res->getBody()->getContents(), $matches);
+
+// dump($cookie);
+// dump($matches[1]);
+
+// $res2 = $client->request('POST', 'https://github.com/session', [
+//     'cookies' => $cookie,
+//     'allow_redirects' => true,
+//     'form_params' => [
+//         'login' => $user,
+//         'password' => '',
+//         'commit' => 'Sign in',
+//         'utf8' => '✓',
+//         'authenticity_token' => $matches[1],
+//     ],
+// ]);
 
 // $res2 = $client->request('GET', 'https://github.com/' . $user, [
 //     'cookies' => $cookie
 // ]);
 
-dump($res2->getBody()->getContents());
-dump($cookie);
+// dump($res2->getBody()->getContents());
+// dump($cookie);
