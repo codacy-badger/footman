@@ -112,4 +112,26 @@ return [
             'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36'
         ),
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Footman Share Cookie [Bool|Array]
+    |--------------------------------------------------------------------------
+    |
+    | Specifies whether or not cookies are used in a request or 
+    | What cookie jar to use or what cookies to send.
+    | If you dont want
+    |
+    */
+    'cookies' => [
+        'share' => true,
+        'type' => \GuzzleHttp\Cookie\CookieJar::class,
+        // If you use [\GuzzleHttp\Cookie\FileCookieJar::class] you can 
+        // Set Session to true to store session cookies in the cookie jar.
+        'session' => true,
+        // If you use [\GuzzleHttp\Cookie\CookieJar::class] you can 
+        // Set Strict to true to throw exceptions when 
+        // Invalid cookies are added to the cookie jar.
+        'strict' => false,
+    ],
 ];
