@@ -4,7 +4,9 @@ namespace Alshf;
 
 use Closure;
 use Alshf\Response;
+use Alshf\Container;
 use GuzzleHttp\Client;
+use ReflectionException;
 use Alshf\Exceptions\FootmanException;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\RequestException;
@@ -28,7 +30,7 @@ class Footman
     {
         $this->setOptions($options);
 
-        $this->client = new Client(['cookie' => $this->canShareCookies()]);
+        $this->client = new Client(['cookies' => $this->canShareCookies()]);
     }
 
     public function __get($key)
@@ -86,9 +88,9 @@ class Footman
 
     private function make()
     {
-        $this->setCookieObject();
-
         try {
+            $this->setCookiesObject();
+
             $this->response = $this->client->request(
                 $this->options->pull('request_type'),
                 $this->options->pull('request_url'),
@@ -97,8 +99,11 @@ class Footman
             
             $this->options->forget('form_params');
             $this->options->forget('multipart');
+            $this->options->forget('cookies');
 
             return new Response($this->response);
+        } catch (ReflectionException $e) {
+            throw new FootmanCookiesException('Cookies Container : ' . $e->getMessage());
         } catch (RequestException $e) {
             throw new FootmanRequestException('Networking Errors : ' . $this->exceptionMessage($e));
         } catch (ClientException $e) {
@@ -122,6 +127,16 @@ class Footman
         return $this->options->has($key) && is_array($this->options->get($key)) && is_array($value);
     }
 
+    private function canShareCookies()
+    {
+        return $this->cookies->get('share') ? true : false;
+    }
+
+    private function canUseCookies()
+    {
+        return !$this->cookies->isEmpty();
+    }
+
     private function setOptions(array $options)
     {
         $this->options = collect($options);
@@ -139,8 +154,8 @@ class Footman
 
         if ($cookies) {
             return collect([
-                'share' => true,
-                'type' => \GuzzleHttp\Cookie\CookieJar::class,
+                'share' => false,
+                'type' => 'jar',
                 'strict' => false
             ]);
         }
@@ -148,17 +163,7 @@ class Footman
         return collect([]);
     }
 
-    private function canShareCookies()
-    {
-        return $this->cookies->get('share') ? true : false;
-    }
-
-    private function canUseCookies()
-    {
-        return !$this->cookies->isEmpty();
-    }
-
-    private function getCookieType()
+    private function getCookiesType()
     {
         switch ($this->cookies->get('type')) {
             case 'file':
@@ -175,69 +180,68 @@ class Footman
         }
     }
 
-    private function setCookieObject()
+    private function setCookiesObject()
     {
         if ($this->canUseCookies()) {
             try {
-                $this->getSingletonCookieObject();
+                $object = $this->getSingletonCookiesObject();
             } catch (FootmanException $e) {
-                $type = $this->getCookieType();
+                $this->handleFileCookies();
 
-                $r = new \ReflectionClass($type);
-                $met = new \ReflectionMethod($r->name, $r->getConstructor()->name);
-                // $r->newInstanceArgs($this->cookies->get('session'));
-                dump($r);
-                dump($met->getParameters());
-                dump($r->newInstanceArgs([
-                    'strictMode' => $this->cookies->get('strict')
-                ]));
-                die;
-                if ($type === \GuzzleHttp\Cookie\CookieJar::class) {
-                    if ($this->cookies->has('strict')) {
-                        $cookies = new $type($this->cookies->get('strict') ? true : false);
-                    } else {
-                        $cookies = new $type;
-                    }
+                $contianer = new Container(
+                    $this->getCookiesType(),
+                    $this->getCookiesObjectArguments()
+                );
 
-                    $this->options->put('cookies', $cookies);
-                }
+                $object = $contianer->make();
 
-                if ($type === \GuzzleHttp\Cookie\FileCookieJar::class) {
-                    if (! $this->options->get('cookie_name')) {
-                        throw new FootmanException('No Cookie name Provided!');
-                    }
-
-                    if ($this->cookies->has('session')) {
-                        $cookies = new $type(__DIR__ . '/Cookies/' . $this->cookieTag(), $this->cookies->get('session') ? true : false);
-                    } else {
-                        $cookies = new $type(__DIR__ . '/Cookies/' . $this->cookieTag());
-                    }
-
-                    $this->options->put('cookies', $cookies);
-                }
+                $this->cookies->put('object', $object);
+            } finally {
+                $this->options->put('cookies', $object);
             }
         }
     }
 
-    private function getSingletonCookieObject()
+    private function getSingletonCookiesObject()
     {
         if (!$this->cookies->has('object') ||
             $this->cookies->has('tag') &&
-            !$this->compareCookieTag()
+            !$this->compareCookiesTag()
         ) {
             throw new FootmanException;
         }
 
-        $this->options->put('cookies', $this->cookies->get('object'));
+        return $this->cookies->get('object');
     }
 
-    private function cookieTag()
+    private function handleFileCookies()
     {
-        return md5($this->options->get('cookie_name'));
+        if ($this->cookies->get('type') == 'file') {
+            if (!$this->options->get('cookies_name')) {
+                throw new FootmanCookiesException('No Cookies name Provided!');
+            }
+
+            $cookiesTag = $this->cookiesTag();
+            
+            $this->cookies->put('tag', $cookiesTag);
+            $this->cookies->put('cookie_file', __DIR__ . '/Cookies/' . $cookiesTag);
+        }
     }
 
-    private function compareCookieTag()
+    private function cookiesTag()
     {
-        return $this->cookies->get('tag') == $this->cookieTag();
+        return $this->options->get('cookies_name');
+    }
+
+    private function compareCookiesTag()
+    {
+        return $this->cookies->get('tag') == $this->cookiesTag();
+    }
+
+    private function getCookiesObjectArguments()
+    {
+        return $this->cookies->mapWithKeys(function ($item, $key) {
+            return [camel_case($key) => $item];
+        })->toArray();
     }
 }

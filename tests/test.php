@@ -48,8 +48,15 @@ use Alshf\Footman;
 // 
 
 $client = new Footman(['cookies' => [
+        // 'share' => true,
         'type' => 'jar',
-        'strict' => true
+        // If you use [file] as a type you can
+        // Set store_session_cookies to true to store session cookies in the cookie jar.
+        'store_session_cookies' => true,
+        // If you use [jar] as a type you can
+        // Set strict_mode to true to throw exceptions when
+        // Invalid cookies are added to the cookie jar.
+        'strict_mode' => true,
     ]
 ]);
 
@@ -57,7 +64,7 @@ $res = $client->request(function ($request) {
     $request->request_type = 'GET';
     $request->request_url = 'https://github.com/login';
     $request->allow_redirects = true;
-    $request->cookie_name = 'alshf89';
+    $request->cookies_name = 'alshf89';
 });
 
 preg_match('/input.*?authenticity_token".*?value="(.*?)"/', $res->getContents(), $matches);
@@ -67,10 +74,10 @@ $res2 = $client->request(function ($request) use ($matches) {
     $request->request_type = 'POST';
     $request->request_url = 'https://github.com/session';
     $request->allow_redirects = true;
-    $request->cookie_name = 'alshf89';
+    $request->cookies_name = 'alshf89';
     $request->form_params = [
         'login' => 'alshf89',
-        'password' => 'nima491010',
+        'password' => '',
         'commit' => 'Sign in',
         'utf8' => '✓',
         'authenticity_token' => $matches[1],

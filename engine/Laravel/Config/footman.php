@@ -124,14 +124,16 @@ return [
     |
     */
     'cookies' => [
+        // Share Cookies in all requests
         'share' => true,
+        // Cookie Type [file|jar]
         'type' => 'jar',
         // If you use [file] as a type you can
-        // Set Session to true to store session cookies in the cookie jar.
-        'session' => true,
+        // Set store_session_cookies to true to store session cookies in the cookie jar.
+        'store_session_cookies' => true,
         // If you use [jar] as a type you can
-        // Set Strict to true to throw exceptions when
+        // Set strict_mode to true to throw exceptions when
         // Invalid cookies are added to the cookie jar.
-        'strict' => false,
+        'strict_mode' => false
     ],
 ];
