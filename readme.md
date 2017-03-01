@@ -161,7 +161,7 @@ Check out all Footman Laravel Configuration in *config/footman.php* File.
 
 #### Error Handler
 
-you can get all Error with *FootmanException* Exception.
+you can get all Error with *FootmanRequestException* & *FootmanCookiesException* Exception.
 
 ```PHP
 // Use Request Provider & Exceptions
@@ -198,9 +198,6 @@ try {
     echo $e->getMessage();
 }
 ```
-
-*FootmanCookiesException* Catch All Cookies Errors.
-*FootmanRequestException* Catch All HTML & connection Errors, timeouts and etc...
 
 Footman also provides _Response_ Exception :
 
