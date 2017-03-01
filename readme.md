@@ -153,7 +153,7 @@ class SomeController extends Controller
             $request->request_url = 'https://someWebsiteName.com/';
         });
 
-        echo $this->response->getHeaders();
+        $this->response->getHeaders();
     }
 }
 ```
