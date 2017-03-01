@@ -114,7 +114,7 @@ namespace App\Http\Controllers;
 
 use Footman;
 
-class TelegramController extends Controller
+class SomeController extends Controller
 {
     private $response;
 
@@ -136,7 +136,7 @@ namespace App\Http\Controllers;
 
 use Alshf\Footman;
 
-class TelegramController extends Controller
+class SomeController extends Controller
 {
     private $response;
 
