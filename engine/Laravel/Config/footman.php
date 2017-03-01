@@ -81,6 +81,7 @@ return [
     |
     | Set to "v4" if you want the HTTP handlers to use only ipv4 protocol 
     | Or "v6" for ipv6 protocol.
+    | Pass null to disable Force IP Resolve for a request.
     |
     */
     'force_ip_resolve' => env('FOOTMAN_IP_RESOLVE', null),
@@ -92,11 +93,41 @@ return [
     |
     | Set to true to inform HTTP handlers that you intend on waiting on the response.
     | This can be useful for optimizations.
+    | Pass null to disable Synchronous for a request.
     |
     */
     'synchronous' => env('FOOTMAN_SYNCHRONOUS', null),
 
-    /*
+   /*
+    |--------------------------------------------------------------------------
+    | Footman Certificate [String|Array]
+    |--------------------------------------------------------------------------
+    |
+    | Set to a string to specify the path to a file containing a PEM formatted
+    | Client side certificate. If a password is required, then set to an array 
+    | Containing the path to the PEM file in the first array element followed 
+    | By the password required for the certificate in the second array element.
+    | Pass null to disable Certificate for a request.
+    | ex : ['/path/server.pem', 'password']
+    |
+    */
+    'cert' => null,
+
+   /*
+    |--------------------------------------------------------------------------
+    | Footman Authenticate [String|Array]
+    |--------------------------------------------------------------------------
+    |
+    | Pass an array of HTTP authentication parameters to use with the request.
+    | The array must contain the username in index [0], the password in index [1],
+    | And you can optionally provide a built-in authentication type in index [2].
+    | Pass null to disable authentication for a request.
+    | ex : ['username', 'password']
+    |
+    */
+    'auth' => null,
+
+   /*
     |--------------------------------------------------------------------------
     | Footman Header [Array]
     |--------------------------------------------------------------------------

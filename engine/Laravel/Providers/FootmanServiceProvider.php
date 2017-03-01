@@ -21,6 +21,7 @@ class FootmanServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        // Create Configuration File
         $this->publishes([
             dirname(__DIR__) . '/Config/footman.php' => config_path('footman.php')
         ], 'footman');
@@ -45,12 +46,15 @@ class FootmanServiceProvider extends ServiceProvider
      */
     protected function registerFootman()
     {
+        // Get All Footman Configuration
         $config = $this->getFootmanConfiguration();
 
+        // Create New instance for Footman Class
         $this->app->singleton(Footman::class, function ($app) use ($config) {
             return new Footman($config);
         });
 
+        // Set Alias for Facades
         $this->app->alias(Footman::class, 'footman');
     }
 
@@ -64,6 +68,11 @@ class FootmanServiceProvider extends ServiceProvider
         return ['footman', Footman::class];
     }
 
+    /**
+     * Get All footman Configuration
+     *
+     * @return array
+     */
     private function getFootmanConfiguration()
     {
         return collect($this->app['config']->get('footman'))->filter(function ($value, $key) {

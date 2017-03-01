@@ -7,33 +7,73 @@ use Alshf\Exceptions\FootmanResponseException;
 
 class Response
 {
+    /**
+     * Request Response Object
+     *
+     * @var Psr\Http\Message\ResponseInterface
+     */
     private $response;
 
+    /**
+     * Footman Response Constructor
+     *
+     * @param Psr\Http\Message\ResponseInterface $response
+     * @return void
+     */
     public function __construct(ResponseInterface $response)
     {
         $this->response = $response;
     }
 
+    /**
+     * Read Number of Character from response body
+     *
+     * @param  int $length
+     * @return string
+     */
     public function read($length)
     {
         return $this->getBody()->read($length);
     }
 
+    /**
+     * Get all body Contents
+     *
+     * @return string
+     */
     public function getContents()
     {
         return $this->getBody()->getContents();
     }
 
+    /**
+     * Rewind Body
+     *
+     * @param  int $pointer
+     * @return string
+     */
     public function seek($pointer)
     {
         return $this->getBody()->seek($pointer);
     }
 
+    /**
+     * Get all request header
+     *
+     * @return Illuminate\Support\Collection
+     */
     public function getHeaders()
     {
         return collect($this->getHeaders());
     }
 
+    /**
+     * Call to all GuzzleHttp Response methods
+     *
+     * @param  string $method
+     * @param  array $arguments
+     * @return mix
+     */
     public function __call($method, $arguments)
     {
         if (method_exists($this->response, $method)) {

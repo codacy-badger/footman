@@ -13,6 +13,7 @@ Footman can Send any Request to any URL. At least PHP 7.0 is required.
     - [Laravel Additional Steps](#laravel-additional-steps)
  - [How to use](#how-to-use)
  	- [Example](#example)
+    - [Laravel Example](#laravel-example)
  	- [Error Handler](#error-handler)
  - [Contributing](#contributing)
  - [Credits](#credits)
@@ -62,23 +63,17 @@ require 'vendor/autoload.php';
 use Alshf\Footman;
 
 // Create New Instance of it
-$client = new Footman;
+$client = new Footman([
+    'header' => [
+        'User-Agent' => 'Footman CURL'
+    ],
+    'allow_redirects' => true,
+]);
 
 // Now you can make a request by passing a closure in it
 $response = $client->request(function ($request) {
-    $request->header = [
-        'User-Agent' => 'Footman User-Agent'
-    ];
-
-    $request->allow_redirects = [
-        'max'             => 10,
-        'strict'          => false,
-        'referer'         => false,
-        'protocols'       => ['http', 'https'],
-        'track_redirects' => false
-    ];
-
-    $request->request_url = 'https://google.com/';
+    $request->request_type = 'GET';
+    $request->request_url = 'https://someWebsiteName.com/';
 });
 
 // Get All Headers as Laravel Collection
@@ -96,6 +91,9 @@ $response->getbody();
 // Get Response Raw Body
 $response->getContents();
 
+// Rewind Body
+$response->seek(0);
+
 // Read 10 Characters of body
 $response->read(10);
 
@@ -107,6 +105,60 @@ $response->getStatusPhrase();
 ```
 ___
 
+#### Laravel Example
+
+You can use Footman Facade in Laravel so Footman Service Provider will set all configuration for you.
+
+```PHP
+namespace App\Http\Controllers;
+
+use Footman;
+
+class TelegramController extends Controller
+{
+    private $response;
+
+    public function index()
+    {
+        $this->response = Footman::request(function ($request) {
+            $request->request_url = 'https://someWebsiteName.com/';
+        });
+
+        echo $this->response->getHeaders();
+    }
+}
+```
+
+You can also inject Footman into the constructor.
+
+```PHP
+namespace App\Http\Controllers;
+
+use Alshf\Footman;
+
+class TelegramController extends Controller
+{
+    private $response;
+
+    private $footman;
+
+    public function __construct(Footman $footman)
+    {
+        $this->footman = $footman;
+    }
+
+    public function index()
+    {
+        $this->response = $this->footman->request(function ($request) {
+            $request->request_url = 'https://someWebsiteName.com/';
+        });
+
+        echo $this->response->getHeaders();
+    }
+}
+```
+Check out all Footman Laravel Configuration in *config/footman.php* File.
+
 #### Error Handler
 
 you can get all Error with *FootmanException* Exception.
@@ -114,7 +166,8 @@ you can get all Error with *FootmanException* Exception.
 ```PHP
 // Use Request Provider & Exceptions
 use Alshf\Footman;
-use Alshf\Exceptions\FootmanException;
+use Alshf\Exceptions\FootmanCookiesException;
+use Alshf\Exceptions\FootmanRequestException;
 
 try {
     $client = new Footman;
@@ -124,7 +177,7 @@ try {
     	$request->request_type = 'POST';
 
     	// Request URL
-        $request->request_url = 'https://google.com/';
+        $request->request_url = 'https://someWebsiteName.com/';
 
         // Authenticate
         $request->auth = ['username', 'password'];
@@ -137,7 +190,35 @@ try {
 
 	    $request->allow_redirects = false;
     });
-} catch (FootmanException $e) {
+} catch (FootmanRequestException $e) {
+    // Catch All HTML & connection Errors, timeouts and etc...
+    echo $e->getMessage();
+} catch (FootmanCookiesException $e) {
+    // Catch All Cookies Errors
+    echo $e->getMessage();
+}
+```
+
+*FootmanCookiesException* Catch All Cookies Errors.
+*FootmanRequestException* Catch All HTML & connection Errors, timeouts and etc...
+
+Footman also provides _Response_ Exception :
+
+```PHP
+use Alshf\Exceptions\FootmanResponseException;
+
+try {
+    dump($response->getHeaders());
+    dump($response->hasHeader('content/type'));
+    dump($response->getHeader('content/type'));
+    dump($response->getbody());
+    dump($response->getContents());
+    dump($response->read(10));
+    dump($response->getStatusCode());
+    dump($response->getStatusPhrase());
+    dump($response->seek(0));
+} catch (FootmanResponseException $e) {
+    // Catch All Response Errors.
     echo $e->getMessage();
 }
 ```
