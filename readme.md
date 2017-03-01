@@ -124,7 +124,7 @@ class SomeController extends Controller
             $request->request_url = 'https://someWebsiteName.com/';
         });
 
-        echo $this->response->getHeaders();
+        $this->response->getHeaders();
     }
 }
 ```
@@ -205,15 +205,15 @@ Footman also provides _Response_ Exception :
 use Alshf\Exceptions\FootmanResponseException;
 
 try {
-    dump($response->getHeaders());
-    dump($response->hasHeader('content/type'));
-    dump($response->getHeader('content/type'));
-    dump($response->getbody());
-    dump($response->getContents());
-    dump($response->read(10));
-    dump($response->getStatusCode());
-    dump($response->getStatusPhrase());
-    dump($response->seek(0));
+    $response->getHeaders();
+    $response->hasHeader('content/type');
+    $response->getHeader('content/type');
+    $response->getbody();
+    $response->getContents();
+    $response->read(10);
+    $response->getStatusCode();
+    $response->getStatusPhrase();
+    $response->seek(0);
 } catch (FootmanResponseException $e) {
     // Catch All Response Errors.
     echo $e->getMessage();
