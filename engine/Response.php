@@ -33,7 +33,7 @@ class Response
      */
     public function read($length)
     {
-        return $this->getBody()->read($length);
+        return $this->response->getBody()->read($length);
     }
 
     /**
@@ -43,7 +43,7 @@ class Response
      */
     public function getContents()
     {
-        return $this->getBody()->getContents();
+        return $this->response->getBody()->getContents();
     }
 
     /**
@@ -54,7 +54,7 @@ class Response
      */
     public function seek($pointer)
     {
-        return $this->getBody()->seek($pointer);
+        return $this->response->getBody()->seek($pointer);
     }
 
     /**
@@ -64,7 +64,7 @@ class Response
      */
     public function getHeaders()
     {
-        return collect($this->getHeaders());
+        return collect($this->response->getHeaders());
     }
 
     /**

@@ -48,8 +48,8 @@ try {
         $request->request_type = 'POST';
         $request->request_url = 'https://github.com/session';
         $request->form_params = [
-            'login' => 'Your GitHub Username',
-            'password' => 'Your Github Password',
+            'login' => 'alshf89',
+            'password' => 'nima491010',
             'commit' => 'Sign in',
             'utf8' => '✓',
             'authenticity_token' => $matches[1],
@@ -71,7 +71,7 @@ try {
     dump($response->getContents());
     dump($response->read(10));
     dump($response->getStatusCode());
-    dump($response->getStatusPhrase());
+    dump($response->getReasonPhrase());
     dump($response->seek(0));
 } catch (FootmanResponseException $e) {
     // Catch All Response Errors
