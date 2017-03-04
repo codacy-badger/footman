@@ -48,8 +48,8 @@ try {
         $request->request_type = 'POST';
         $request->request_url = 'https://github.com/session';
         $request->form_params = [
-            'login' => 'alshf89',
-            'password' => 'nima491010',
+            'login' => 'Your Username',
+            'password' => 'Your Password',
             'commit' => 'Sign in',
             'utf8' => '✓',
             'authenticity_token' => $matches[1],
