@@ -7,12 +7,10 @@ use Alshf\Response;
 use Alshf\Container;
 use GuzzleHttp\Client;
 use ReflectionException;
-use Alshf\Exceptions\FootmanException;
-use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\RequestException;
-use GuzzleHttp\Psr7 as GuzzleErrorHandler;
 use Alshf\Exceptions\FootmanCookiesException;
 use Alshf\Exceptions\FootmanRequestException;
+use Alshf\Exceptions\FootmanBadRequestException;
 
 class Footman
 {
@@ -132,11 +130,11 @@ class Footman
     private function checkRequestType()
     {
         if (! $this->options->has('request_type')) {
-            throw new FootmanRequestException('No request type provided!');
+            throw new FootmanBadRequestException('Please enter value for "request_type" in request closure.', 1001);
         }
 
         if (! $this->options->whereIn('request_type', static::$requestType)) {
-            throw new FootmanRequestException('Invalid Request type [' . $this->options->get('request_type') . ']');
+            throw new FootmanBadRequestException('Invalid "request_type" [' . $this->options->get('request_type') . '].', 1002);
         }
         
         return $this;
@@ -150,7 +148,7 @@ class Footman
     private function checkURL()
     {
         if (! $this->options->has('request_url')) {
-            throw new FootmanRequestException('No request URL provided!');
+            throw new FootmanBadRequestException('Please enter value for "request_url" in request closure.', 1003);
         }
 
         return $this;
@@ -184,29 +182,10 @@ class Footman
 
             return new Response($this->response);
         } catch (ReflectionException $e) {
-            throw new FootmanCookiesException('Cookies Container : ' . $e->getMessage());
+            throw new FootmanCookiesException($e->getMessage(), 1004, $e);
         } catch (RequestException $e) {
-            throw new FootmanRequestException('Networking Errors : ' . $this->exceptionMessage($e));
-        } catch (ClientException $e) {
-            throw new FootmanRequestException('Http Errors : ' . $this->exceptionMessage($e));
+            throw new FootmanRequestException($e);
         }
-    }
-
-    /**
-     * Create Exception Message From Guzzle Error Handler
-     *
-     * @param  exception $exception
-     * @return string
-     */
-    private function exceptionMessage($exception)
-    {
-        $request = GuzzleErrorHandler\str($exception->getRequest());
-
-        if ($exception->hasResponse()) {
-            $response = GuzzleErrorHandler\str($exception->getResponse());
-        }
-
-        return collect(compact('request', 'response'))->implode(null);
     }
 
     /**
@@ -299,7 +278,7 @@ class Footman
                 break;
             
             default:
-                throw new FootmanCookiesException('Invalid Cookie type [' . $this->cookies->get('type') . ']');
+                throw new FootmanCookiesException('Invalid cookie "type" [' . $this->cookies->get('type') . '].', 1005);
                 break;
         }
     }
@@ -317,7 +296,7 @@ class Footman
                 // Try to get Cookies Object From previous Request
                 // This will throw Exception if no cookies object found
                 $object = $this->getSingletonCookiesObject();
-            } catch (FootmanException $e) {
+            } catch (FootmanCookiesException $e) {
                 // Check if the cookies type is file then set
                 // Cookie tag & cookie File into cookies property
                 $this->handleFileCookies();
@@ -350,7 +329,7 @@ class Footman
             $this->cookies->has('tag') &&
             !$this->compareCookiesTag()
         ) {
-            throw new FootmanException;
+            throw new FootmanCookiesException;
         }
 
         return $this->cookies->get('object');
@@ -366,7 +345,7 @@ class Footman
     {
         if ($this->cookies->get('type') == 'file') {
             if (!$this->options->get('cookies_name')) {
-                throw new FootmanCookiesException('No Cookies name Provided!');
+                throw new FootmanCookiesException('Please enter value for "cookie_name" in request closure.', 1006);
             }
 
             $this->cookies->put('tag', $this->cookiesTag());

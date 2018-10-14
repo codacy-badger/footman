@@ -80,6 +80,6 @@ class Response
             return call_user_func_array([$this->response, $method], $arguments);
         }
 
-        throw new FootmanResponseException('Method [' . $method . '] doesn\'t exist!');
+        throw new FootmanResponseException('Method [' . $method . '] doesn\'t exist.');
     }
 }
