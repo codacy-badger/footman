@@ -345,7 +345,7 @@ class Footman
     {
         if ($this->cookies->get('type') == 'file') {
             if (!$this->options->get('cookies_name')) {
-                throw new FootmanCookiesException('Please enter value for "cookie_name" in request closure.', 1006);
+                throw new FootmanCookiesException('Please enter value for "cookies_name" in request closure.', 1006);
             }
 
             $this->cookies->put('tag', $this->cookiesTag());

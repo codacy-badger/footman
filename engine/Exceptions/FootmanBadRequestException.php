@@ -4,6 +4,6 @@ namespace Alshf\Exceptions;
 
 use Alshf\Exceptions\FootmanException;
 
-class FootmanBadException extends FootmanException
+class FootmanBadRequestException extends FootmanException
 {
 }
