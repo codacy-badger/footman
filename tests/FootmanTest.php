@@ -41,7 +41,7 @@ final class FootmanTest extends TestCase {
 	       	$this->assertEquals($response->getStatusCode(), 200);
 	       	$this->assertEquals($response->getReasonPhrase(), 'OK');
 
-	       	$this->assertGreaterThanOrEqual(0, $response->getHeaders());
+	       	$this->assertGreaterThanOrEqual(0, $response->getHeaders()->count());
 			$this->assertTrue($response->hasHeader('Content-Type'));
 
 			$this->assertNotEmpty($response->getContents());
@@ -152,7 +152,7 @@ final class FootmanTest extends TestCase {
 	            ]
 	        ]);
 
-	        $client->request(function ($request) use ($name) {
+	        $client->request(function ($request) {
 	            $request->request_type = 'GET';
 	            $request->request_url = 'https://github.com/';
 	        });
