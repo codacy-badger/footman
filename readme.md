@@ -1,5 +1,6 @@
 [![License](https://poser.pugx.org/alshf/footman/license)](https://packagist.org/packages/alshf/footman)
 [![Total Downloads](https://poser.pugx.org/alshf/footman/downloads)](https://packagist.org/packages/alshf/footman)
+[![Build Status](https://travis-ci.org/alshf89/footman.svg?branch=master)](https://travis-ci.org/alshf89/footman)
 [![Latest Stable Version](https://poser.pugx.org/alshf/footman/version)](https://packagist.org/packages/alshf/footman)
 
 # Footman Request Sender
@@ -161,7 +162,7 @@ Check out all Footman Laravel Configuration in *config/footman.php* File.
 
 #### Error Handler
 
-you can get all Error with *FootmanRequestException* & *FootmanCookiesException* Exception.
+you can get all Error with *FootmanException* but if you want to get request errors like connection error, Server errors like 5xx or 4xx errors you can catch them with *FootmanRequestException*, you can also catch cookies errors with *FootmanCookiesException*.
 
 ```PHP
 // Use Request Provider & Exceptions
@@ -193,6 +194,10 @@ try {
 } catch (FootmanRequestException $e) {
     // Catch All HTML & connection Errors, timeouts and etc...
     echo $e->getMessage();
+
+    // If we have 4xx or 5xx error
+    echo $e->getStatusPhrase();
+    echo $e->getStatusCode();
 } catch (FootmanCookiesException $e) {
     // Catch All Cookies Errors
     echo $e->getMessage();
@@ -230,4 +235,4 @@ The code on which this package is principally developed and maintained by [Ali S
 
 ### License
 
-The HunterDog package is released under [BSD-3-Clause](LICENSE.txt).
+Footman package is released under [MIT](LICENSE.txt).
