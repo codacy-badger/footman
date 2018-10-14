@@ -1,9 +1,9 @@
 language: php
 
 php:
-    7.0
+  - 7.0
 
 install:
-    composer require illuminate/support:^5.5
-    composer require guzzlehttp/guzzle:^6.3
-    php vendor/autoload.php
+   - composer require illuminate/support:^5.5
+   - composer require guzzlehttp/guzzle:^6.3
+   - php vendor/autoload.php
