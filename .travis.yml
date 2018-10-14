@@ -3,11 +3,7 @@ language: php
 php:
     7.0
 
-env:
-    illuminateVersion="^5.5"
-    guzzleVersion="^6.3"
-
 install:
-    composer require illuminate/support:${illuminateVersion}
-    composer require guzzlehttp/guzzle:${guzzleVersion}
+    composer require illuminate/support:^5.5
+    composer require guzzlehttp/guzzle:^6.3
     php vendor/autoload.php
