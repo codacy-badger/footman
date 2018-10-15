@@ -147,21 +147,21 @@ final class FootmanTest extends TestCase {
 	}
 
 	public function testCookiesException() {
-		$this->markTestSkipped();
-		
 		try {
 	        $client = new Footman([
 	            'cookies' => [
 	                'share' => true,
-	                'type' => 'file'
-	            ]
+	                'type' => 'file',
+	                'store_session_cookies' => true
+	            ],
+	            'allow_redirects' => true,
 	        ]);
 
 	        $client->request(function ($request) {
 	            $request->request_type = 'GET';
 	            $request->request_url = 'https://github.com/';
 	        });
-	    } catch (FootmanException $e) {
+	    } catch (FootmanCookiesException $e) {
 	        $this->assertInstanceOf(FootmanCookiesException::class, $e);
 	    }
 	}
