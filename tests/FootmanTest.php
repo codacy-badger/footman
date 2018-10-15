@@ -121,16 +121,17 @@ final class FootmanTest extends TestCase {
 	       	$this->assertInternalType('string', $matches[1]);
 
 	       	if (!$username || !$password) {
+	       		// Fill usernameAndPasswordProvider Method to provide username and password to prevent skipping
 	       		$this->markTestSkipped();
 	       	}
 
 	        // Now Attemp to Login on Github
-	        $response = $client->request(function ($request) use ($matches) {
+	        $response = $client->request(function ($request) use ($matches, $username, $password) {
 	            $request->request_type = 'POST';
 	            $request->request_url = 'https://github.com/session';
 	            $request->form_params = [
-	                'login' => 'Your Username',
-	                'password' => 'Your Password',
+	                'login' => $username,
+	                'password' => $password,
 	                'commit' => 'Sign in',
 	                'utf8' => '✓',
 	                'authenticity_token' => $matches[1],
