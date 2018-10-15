@@ -161,7 +161,7 @@ final class FootmanTest extends TestCase {
 	            $request->request_type = 'GET';
 	            $request->request_url = 'https://github.com/';
 	        });
-	    } catch (FootmanCookiesException $e) {
+	    } catch (FootmanException $e) {
 	        $this->assertInstanceOf(FootmanCookiesException::class, $e);
 	    }
 	}

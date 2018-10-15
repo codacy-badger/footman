@@ -312,8 +312,10 @@ class Footman
                 // put Cookies Object into Cookies Property
                 $this->cookies->put('object', $object);
             } finally {
-                // put Cookies Object into Request Options Property
-                $this->options->put('cookies', $object);
+                if (isset($object) && !empty($object)) {
+                    // put Cookies Object into Request Options Property
+                    $this->options->put('cookies', $object);
+                }
             }
         }
     }
