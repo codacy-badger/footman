@@ -88,6 +88,9 @@ final class FootmanTest extends TestCase {
 	}
 
 	public function testLoginToGithubExample() {
+		// Comment this line and enter your username and password
+		$this->markTestSkipped();
+
 		try {
 	        $client = new Footman([
 	            'cookies' => [
@@ -105,24 +108,24 @@ final class FootmanTest extends TestCase {
 	        });
 
 	        // Get authenticity_token in Github Login Page
-	        // preg_match(
-	        //     '/input.*?authenticity_token".*?value="(.*?)"/',
-	        //     $response->getContents(),
-	        //     $matches
-	        // );
+	        preg_match(
+	            '/input.*?authenticity_token".*?value="(.*?)"/',
+	            $response->getContents(),
+	            $matches
+	        );
 
 	        // Now Attemp to Login on Github
-	        // $response = $client->request(function ($request) use ($matches) {
-	        //     $request->request_type = 'POST';
-	        //     $request->request_url = 'https://github.com/session';
-	        //     $request->form_params = [
-	        //         'login' => 'Your Username',
-	        //         'password' => 'Your Password',
-	        //         'commit' => 'Sign in',
-	        //         'utf8' => '✓',
-	        //         'authenticity_token' => $matches[1],
-	        //     ];
-	        // });
+	        $response = $client->request(function ($request) use ($matches) {
+	            $request->request_type = 'POST';
+	            $request->request_url = 'https://github.com/session';
+	            $request->form_params = [
+	                'login' => 'Your Username',
+	                'password' => 'Your Password',
+	                'commit' => 'Sign in',
+	                'utf8' => '✓',
+	                'authenticity_token' => $matches[1],
+	            ];
+	        });
 
 	        $this->assertInstanceOf(Response::class, $response);
 	    } catch (FootmanException $e) {
