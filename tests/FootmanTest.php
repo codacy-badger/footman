@@ -87,10 +87,10 @@ final class FootmanTest extends TestCase {
 	    }
 	}
 
-	public function testLoginToGithubExample() {
-		// Comment this line and enter your username and password
-		$this->markTestSkipped();
-
+	/**
+	 * @dataProvider usernameAndPasswordProvider
+     */
+	public function testLoginToGithubExample($username, $password) {
 		try {
 	        $client = new Footman([
 	            'cookies' => [
@@ -107,12 +107,22 @@ final class FootmanTest extends TestCase {
 	            $request->request_url = 'https://github.com/login';
 	        });
 
+	        $this->assertInstanceOf(Response::class, $response);
+
 	        // Get authenticity_token in Github Login Page
 	        preg_match(
 	            '/input.*?authenticity_token".*?value="(.*?)"/',
 	            $response->getContents(),
 	            $matches
 	        );
+
+	        $this->assertGreaterThanOrEqual(2, count($matches));
+	        $this->assertNotEmpty($matches[1]);
+	       	$this->assertInternalType('string', $matches[1]);
+
+	       	if (!$username || !$password) {
+	       		$this->markTestSkipped();
+	       	}
 
 	        // Now Attemp to Login on Github
 	        $response = $client->request(function ($request) use ($matches) {
@@ -196,11 +206,17 @@ final class FootmanTest extends TestCase {
 		}
 	}
 
-	public function fileCookiesPathProvider($name) {
+	public function fileCookiesPathProvider() {
 		return [[dirname(__DIR__) . '/engine/Cookies/' . md5('footman_test')]];
 	}
 
 	public function cookiesNameProvider() {
 		return [['footman_test']];
+	}
+
+	public function usernameAndPasswordProvider() {
+		return [
+			['username' => null, 'password' => null]
+		]
 	}
 }
