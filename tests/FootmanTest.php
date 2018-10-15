@@ -217,6 +217,6 @@ final class FootmanTest extends TestCase {
 	public function usernameAndPasswordProvider() {
 		return [
 			['username' => null, 'password' => null]
-		]
+		];
 	}
 }
